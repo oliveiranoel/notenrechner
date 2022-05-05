@@ -9,5 +9,9 @@ class Fach:
         return a / len(self.noten)
 
     def wunschnote(self, wunschnote):
-        a = wunschnote * (len(self.noten) + 1)
-        return a - sum(self.noten)
+        a = (wunschnote * (len(self.noten) + 1)) - sum(self.noten)
+        if a <= 6:
+            result = a
+        else:
+            result = "Wunschnote nicht möglich!"
+        return result
