@@ -1,4 +1,4 @@
-from functions import createGrade, printWarning, printError
+from functions import create_grade, print_error, print_warning
 
 
 class Subject:
@@ -9,7 +9,7 @@ class Subject:
 
     def average(self):
         if not self.grades:
-            printError("Keine Noten vorhanden! Bitte erstelle eine Note")
+            print_error("Keine Noten vorhanden! Bitte erstelle eine Note")
             return
 
         total = 0
@@ -18,6 +18,8 @@ class Subject:
             total = total + (e.grade * e.weighting)
             sum_weighting = sum_weighting + e.weighting
 
+        print("\nDurchschnitt")
+        print("---")
         print(round(total / sum_weighting, 3))
 
     def wish_grade(self):
@@ -33,10 +35,12 @@ class Subject:
         result = ((wish_grade * total_weighting) - total_existing_grades) / weighting_wish_grade
 
         if 6 >= result >= 1:
+            print("\nBenötigte Note")
+            print("---")
             print(result)
         else:
-            printWarning("Wunschnote nicht möglich")
+            print_warning("Wunschnote nicht möglich")
 
     def add_grade(self):
-        self.grades.append(createGrade())
+        self.grades.append(create_grade())
 
