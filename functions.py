@@ -1,5 +1,3 @@
-from colorama import Fore
-
 from grade import Grade
 
 
@@ -22,10 +20,8 @@ def create_grade():
 
 
 def print_error(message):
-    print(Fore.RED + "ERROR: " + message)
-    print(Fore.RESET)
+    print("\033[91mERROR: " + message + "\033[0m")
 
 
 def print_warning(message):
-    print(Fore.YELLOW + "WARN: " + message)
-    print(Fore.RESET)
+    print("\033[93mWARN: " + message + "\033[0m")
