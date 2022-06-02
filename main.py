@@ -1,55 +1,29 @@
-from subject import Subject
-from functions import print_error, print_warning
-import pickle
 import os
 
+from functions import print_error, print_warning, choose_subject, loadAllSubjectsFromFiles, saveAllSubjectsToFiles, \
+    displayAllSubjects
+from subject import Subject
 
-def chose_subject():
-    if len(all_subjects) == 0:
-        print_error("Keine Fächer zur Auswahl vorhanden! Bitte Fach erstellen.")
-        return
-
-    while True:
-        print("Wähle ein Fach aus folgender Liste aus:")
-        print(", ".join(all_subjects.keys()))
-        chosen_subject = input()
-
-        if chosen_subject in all_subjects:
-            return chosen_subject
-        else:
-            print_warning("Ausgewähltes Fach nicht vorhanden!")
+# Load all subjects from the files into the dictionary list
+all_subjects = loadAllSubjectsFromFiles()
 
 
-# app = QApplication(sys.argv)
-# screen = Window(mathe)
-# screen.show()
-# sys.exit(app.exec())
-
-# Load all subjects into the dictionary list
-all_subjects = {}
-for filename in os.listdir("./subjects"):
-    with open(os.path.join("./subjects", filename), 'rb') as f:
-        data = pickle.load(f)
-        all_subjects.update({data.name: data})
-        f.close()
-
+# The loop will be repeated as long as the user doesn't enter the number 0.
 while True:
     print("\nWelche operation möchtest du ausführen?")
-    operation = int(input("(1) Fächer anzeigen | (2) Fach hinzufügen | (3) Fach löschen | (4) Noten anzeigen | (5) Note hinzufügen | (6) Note löschen | (7) Durchschnitt | (8) Wunschnote | (0) Abbruch"))
+    operation = int(input("(1) Fächer anzeigen | (2) Fach hinzufügen | (3) Fach löschen | (4) Noten anzeigen | (5) "
+                          "Note hinzufügen | (6) Note löschen | (7) Durchschnitt | (8) Wunschnote | (0) Abbruch"))
 
     match operation:
         case 0:
-            for key, value in all_subjects.items():
-                f = open("./subjects/" + key + ".txt", "wb")
-                pickle.dump(value, f)
-                f.close()
+            # Save all subjects to files and exit the loop.
+            saveAllSubjectsToFiles(all_subjects)
             break
         case 1:
-            print("\nFächer")
-            print("---")
-            for subject in all_subjects.values():
-                print(subject.name)
+            # Print out all the subjects
+            displayAllSubjects(all_subjects)
         case 2:
+            # Unless it's not available yet, add a new subject. Otherwise, print error message.
             while True:
                 name = input("Bitte name vom Fach eingeben: ")
 
@@ -59,32 +33,27 @@ while True:
 
                 print_warning("Fach existiert bereits!")
         case 3:
-            chosen_subject = all_subjects.get(chose_subject())
-            if chosen_subject is None:
-                continue
+            # Delete the chosen subject and also, if present, the file for it.
+            chosen_subject = all_subjects.get(choose_subject(all_subjects))
 
             del all_subjects[chosen_subject.name]
             if os.path.exists("./subjects/" + chosen_subject.name + ".txt"):
                 os.remove("./subjects/" + chosen_subject.name + ".txt")
         case 4:
-            chosen_subject = all_subjects.get(chose_subject())
-            if chosen_subject is None:
-                continue
+            # Print out all the grades for a subject with their weighting.
+            chosen_subject = all_subjects.get(choose_subject(all_subjects))
 
             print("\nNote | Gewichtung")
             print("---")
             for grade in chosen_subject.grades:
                 print(grade.grade, " | ", grade.weighting)
         case 5:
-            chosen_subject = all_subjects.get(chose_subject())
-            if chosen_subject is None:
-                continue
-
+            # Add a grade to the chosen subject
+            chosen_subject = all_subjects.get(choose_subject(all_subjects))
             all_subjects.get(chosen_subject.name).add_grade()
         case 6:
-            chosen_subject = all_subjects.get(chose_subject())
-            if chosen_subject is None:
-                continue
+            # Delete a chosen grade from a chosen subject.
+            chosen_subject = all_subjects.get(choose_subject(all_subjects))
 
             print("\nNr. | Note | Gewichtung")
             print("---")
@@ -94,16 +63,13 @@ while True:
             nr = int(input("Welche Note möchten sie löschen?"))
             del chosen_subject.grades[nr]
         case 7:
-            chosen_subject = all_subjects.get(chose_subject())
-            if chosen_subject is None:
-                continue
-
+            # Get the average grade for the chosen subject.
+            chosen_subject = all_subjects.get(choose_subject(all_subjects))
             all_subjects.get(chosen_subject.name).average()
         case 8:
-            chosen_subject = all_subjects.get(chose_subject())
-            if chosen_subject is None:
-                continue
-
+            # Get the wish grade for the chosen subject.
+            chosen_subject = all_subjects.get(choose_subject(all_subjects))
             all_subjects.get(chosen_subject.name).wish_grade()
         case _:
+            # Print error message if a operation was chosen, which is not available,
             print_error("Operation nicht vorhaden!")
